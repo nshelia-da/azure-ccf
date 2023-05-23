@@ -131,3 +131,60 @@ resource "azurerm_storage_container" "write_container" {
   storage_account_name  = azurerm_storage_account.example.name
   container_access_type = "private"
 }
+
+variable "hello_py_path" {
+  type = string
+  default = "./hello.py"
+}
+resource "azurerm_resource_group" "azure-functions-smth" {
+  name     = "azure-functions-example-rg"
+  location = "West Europe"
+}
+
+resource "azurerm_storage_account" "azurefun_storage_account" {
+  name                     = "functionsappexamlpesa"
+  resource_group_name      = azurerm_resource_group.example.name
+  location                 = azurerm_resource_group.example.location
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
+}
+
+resource "azurerm_app_service_plan" "example" {
+  name                = "azure-functions-example-sp"
+  location            = azurerm_resource_group.example.location
+  resource_group_name = azurerm_resource_group.example.name
+  kind                = "Linux"
+  reserved            = true
+
+  sku {
+    tier = "Dynamic"
+    size = "Y1"
+  }
+
+  lifecycle {
+    ignore_changes = [
+      kind
+    ]
+  }
+}
+
+resource "azurerm_function_app" "example" {
+  name                       = "cloudfootprint-azure-function"
+  location                   = azurerm_resource_group.example.location
+  resource_group_name        = azurerm_resource_group.example.name
+  app_service_plan_id        = azurerm_app_service_plan.example.id
+  storage_account_name       = azurerm_storage_account.example.name
+  storage_account_access_key = azurerm_storage_account.example.primary_access_key
+  os_type                    = "linux"
+  version                    = "~4"
+
+
+  site_config {
+    linux_fx_version = "python|3.9"
+  }
+}
+
+resource "azurerm_storage_queue" "example" {
+  name                 = "example-queue"
+  storage_account_name = azurerm_storage_account.example.name
+}
