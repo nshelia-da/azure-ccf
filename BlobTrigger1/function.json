@@ -2,11 +2,17 @@
   "scriptFile": "__init__.py",
   "bindings": [
     {
-      "name": "myblob",
-      "type": "blobTrigger",
+      "name": "myTimer",
+      "type": "timerTrigger",
       "direction": "in",
-      "path": "samples-workitems/{name}",
-      "connection": "samplecloudfoodprint_STORAGE"
+      "schedule": "0 */5 * * * *"
+    },
+    {
+      "name": "outputQueueItem",
+      "direction": "out",
+      "type": "queue",
+      "connection": "samplecloudfoodprint_STORAGE",
+      "queueName": "example-queue"
     }
   ]
 }
