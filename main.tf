@@ -50,23 +50,22 @@ resource "azurerm_network_security_rule" "example" {
   protocol                    = "Tcp"
   source_port_range           = "*"
   destination_port_range      = "22"
-  source_address_prefix       = "*"
+  source_address_prefix       = "192.168.0.0/24"
   destination_address_prefix  = "*"
   resource_group_name         = azurerm_resource_group.example.name
   network_security_group_name = azurerm_network_security_group.example.name
 }
 
 resource "azurerm_network_interface" "example" {
-  name                      = "example-nic"
-  location                  = azurerm_resource_group.example.location
-  resource_group_name       = azurerm_resource_group.example.name
+  name                = "example-nic"
+  location            = azurerm_resource_group.example.location
+  resource_group_name = azurerm_resource_group.example.name
 
   ip_configuration {
     name                          = "internal"
     subnet_id                     = azurerm_subnet.example.id
     private_ip_address_allocation = "Dynamic"
-    public_ip_address_id          = azurerm_public_ip.example.id
-  }   
+  }
 }
 
 resource "azurerm_storage_account" "example" {
@@ -133,7 +132,7 @@ resource "azurerm_storage_container" "write_container" {
 }
 
 variable "hello_py_path" {
-  type = string
+  type    = string
   default = "./hello.py"
 }
 resource "azurerm_resource_group" "azure-functions-smth" {
